@@ -54,7 +54,7 @@ public class SXYML {
 				
 			if (token.value().compareTo("\\") == 0 && !escape) {
 				escape = true;
-				tokens.nextToken(); //Skip this token, it's just an escape character
+				token = tokens.nextToken(); //Skip this token, it's just an escape character
 			} else {
 				escape = false;
 			}
@@ -68,7 +68,6 @@ public class SXYML {
 			switch (state) {
 			
 				case InsideTag:
-					println("Inside tag");
 					if (token.value().compareTo("}")==0 && !escape) {
 						currentNode = currentNode.getParrent();
 						currentTextNode = null;
@@ -90,7 +89,6 @@ public class SXYML {
 					break;
 			
 				case DefiningTagType:
-					println("DefiningTagType");
 					if (token.value().matches("\\w+")) {
 						Element temp = new Element(token.value());
 						if (rootNode == null) {
@@ -105,7 +103,6 @@ public class SXYML {
 					break;
 					
 				case DefiningAttributes:
-					println("DefiningAttributes");
 					if (token.value().matches("\\w+")) {
 						definingAttrKey = token.value();
 					} else if (token.value().compareTo(":") == 0) {
@@ -119,7 +116,6 @@ public class SXYML {
 					break;
 					
 				case DefiningAttributeValue:
-					println("DefiningAttributeValue");
 					if (insideQuote) {
 						definingAttrValue += token.value();
 					} else if (token.value().matches("\\s+")) {

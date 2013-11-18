@@ -69,7 +69,6 @@ public class TokenReader {
 		public Token(String tokenValue, int tokenLine, int tokenColumn) {
 			column = tokenColumn;
 			line = tokenLine;
-			
 			value = tokenValue;
 		}
 		

@@ -42,6 +42,9 @@ public class Element extends Node{
 		 */
 		public void printTree(String iind) {
 			String ind = iind;
+			if (isVoid) {
+				return;
+			}
 			for (Element element:children) {
 				System.out.print(ind + "<" + element.getTagName());
 				for (String key : element.getAttributes().keySet()) {
@@ -262,8 +265,9 @@ public class Element extends Node{
 			return tagType;
 		}
 		
-		public void setVoid(boolean v) {
-			isVoid = v;
+		public void setVoid() {
+			isVoid = true;
+			children = null; //Keep from having children, this line is like a SxyElement birth controll
 		}
 		
 		public boolean isVoid() {

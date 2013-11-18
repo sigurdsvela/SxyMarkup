@@ -43,7 +43,8 @@ public class TokenReader {
 				"\\\"",
 				"\\}",
 				"\\:",
-				"\\\\"
+				"\\\\",
+				"\\;"
 			}));
 			currentLineNumber++;
 			currentColumnPosition = 0;

@@ -49,7 +49,7 @@ public class SXYML {
 		while ((token = tokens.nextToken()) != null) {
 			if (!token.value().matches("\\s+")) {
 				String lc = (token.line() + ":" + token.column());
-				//println(lc + "\t" + token.value());
+				println(lc + "\t" + token.value());
 			}
 				
 			if (token.value().compareTo("\\") == 0 && !escape) {
@@ -109,7 +109,13 @@ public class SXYML {
 						state = STATE.DefiningAttributeValue;
 					} else if (token.value().compareTo("{") == 0) {
 						state = STATE.InsideTag;
+						definingAttrValue = "";
+					} else if (token.value().compareTo(";") == 0) {
+						state = STATE.InsideTag;
+						definingAttrValue = "";
+						currentNode.setVoid();
 					} else if (isWhiteSpace(token.value())) {
+						//Ignore whitespaces here
 					} else {
 						syntaxError("Unregognized token "+ token.value() + "", token);
 					}
@@ -118,9 +124,21 @@ public class SXYML {
 				case DefiningAttributeValue:
 					if (insideQuote) {
 						definingAttrValue += token.value();
-					} else if (token.value().matches("\\s+")) {
+					} else if (token.value().matches("\\s+") || token.value().compareTo("{") == 0 || token.value().compareTo(";") == 0) {
+						//This is a very hackish solution duplicating code like this
+						//find a better way to be able to pick up on a ; without the " "
+						//Delimiter. Might need so major reconstruction
 						currentNode.addToAttribute(definingAttrKey, definingAttrValue);
 						state = STATE.DefiningAttributes;
+						
+						if (token.value().compareTo("{") == 0) {
+							state = STATE.InsideTag;
+							definingAttrValue = "";
+						} else if (token.value().compareTo(";") == 0) {
+							state = STATE.InsideTag;
+							definingAttrValue = "";
+							currentNode.setVoid();
+						} 
 					} else {
 						syntaxError("Unregognized token \'" + token.value() + "\'", token);
 					}

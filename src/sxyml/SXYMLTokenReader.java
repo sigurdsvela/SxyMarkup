@@ -40,7 +40,8 @@ public class SXYMLTokenReader {
 				"\\{",
 				"\\s",
 				"\\\"",
-				"\\}"
+				"\\}",
+				"\\:"
 			}));
 			currentLineNumber++;
 			currentColumnPosition = 0;

@@ -3,7 +3,7 @@ package sxyml;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-public class SXYMLTokenReader {
+public class TokenReader {
 	private BufferedReader inputFile;
 	private String currentLine;
 	private int currentLineNumber;
@@ -22,7 +22,7 @@ public class SXYMLTokenReader {
 		return pattern.substring(0, pattern.length() - 1); //Remove the last |(pipe)
 	}
 	
-	public SXYMLTokenReader(BufferedReader inputFile) {
+	public TokenReader(BufferedReader inputFile) {
 		this.inputFile = inputFile;
 		eol = true;
 		currentTokenPosition = 0;
@@ -41,7 +41,8 @@ public class SXYMLTokenReader {
 				"\\s",
 				"\\\"",
 				"\\}",
-				"\\:"
+				"\\:",
+				"\\\\"
 			}));
 			currentLineNumber++;
 			currentColumnPosition = 0;

@@ -5,10 +5,10 @@ package sxyml;
  * differes from XMLElement in that it is only a list of XMLElements,a nd not an element in itself.
  * 
  * */
-public class SXYMLNodeList {
-	SXYMLElement[] elements;
+public class NodeList {
+	Element[] elements;
 	
-	public SXYMLNodeList(SXYMLElement[] elements) {
+	public NodeList(Element[] elements) {
 		this.elements = elements;
 	}
 	

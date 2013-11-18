@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import sxyml.SXYML;
-import sxyml.SXYMLElement;
+import sxyml.Element;
 
 public class Main {
-	SXYMLElement sxymlRootNode;
+	Element sxymlRootNode;
 	
 	/**
 	 * @param args
@@ -33,6 +33,6 @@ public class Main {
 			return;
 		}
 		
-		//sxymlRootNode.printTree();
+		sxymlRootNode.printTree();
  	}
 }

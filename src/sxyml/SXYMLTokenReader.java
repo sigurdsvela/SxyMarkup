@@ -14,6 +14,14 @@ public class SXYMLTokenReader {
 	private int currentColumnPosition;
 	private Token currentToken;
 	
+	public String delimiterRegex(String[] delims) {
+		String pattern = "";
+		for (String delim: delims) {
+			pattern += "(?<=" + delim + ")|(?=" + delim + ")|";
+		}
+		return pattern.substring(0, pattern.length() - 1); //Remove the last |(pipe)
+	}
+	
 	public SXYMLTokenReader(BufferedReader inputFile) {
 		this.inputFile = inputFile;
 		eol = true;
@@ -27,7 +35,13 @@ public class SXYMLTokenReader {
 			currentLine = inputFile.readLine();
 			if (currentLine == null)
 				return null;
-			tokens = currentLine.split("((?<=<)|(?=<))|((?<=>)|(?=>))|((?<=\\/)|(?=\\/))|((?<=\\=)|(?=\\=))|((?<=\\=)|(?=\\=))|((?<=\\s+)|(?=\\s+))|((?<=\")|(?=\"))|((?<=<\\/)|(?=<\\/))");
+			tokens = currentLine.split(delimiterRegex(new String[]{
+				"\\@",
+				"\\{",
+				"\\s",
+				"\\\"",
+				"\\}"
+			}));
 			currentLineNumber++;
 			currentColumnPosition = 0;
 			currentTokenPosition = 0;

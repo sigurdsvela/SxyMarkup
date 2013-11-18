@@ -36,6 +36,7 @@ public class SXYML {
 		SXYMLTokenReader.Token token;
 		
 		while ((token = tokens.nextToken()) != null) {
+			System.out.println("Evaluating token " + token.value());
 			switch (state) {
 			
 				case InsideTag:
@@ -59,13 +60,20 @@ public class SXYML {
 					}
 					
 				case DefiningAttributes:
+					if (token.value().matches("\\w+")) {
+						currentNode.addToAttribute(token.value(), tokens.nextToken().value());
+					} else if (token.value() == "{") {
+						state = STATE.InsideTag;
+					} else if (isWhiteSpace(token.value())) {
+					} else {
+						syntaxError("Unregognized token "+ token.value() + "", token);
+					}
+					
 					
 					break;
 				
 			}
 		}
-		
-		//rootnode.printTree();
 		
 		return rootNode;
 	}

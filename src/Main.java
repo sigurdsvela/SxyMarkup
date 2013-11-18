@@ -9,7 +9,7 @@ import sxyml.SXYML;
 import sxyml.SXYMLElement;
 
 public class Main {
-	SXYMLElement xmlRootNode;
+	SXYMLElement sxymlRootNode;
 	
 	/**
 	 * @param args
@@ -21,18 +21,18 @@ public class Main {
 	public Main(String[] args) {
 		BufferedReader inputFile = null;
 		try {
-			inputFile = new BufferedReader(new FileReader("//Users/sigurdbergsvela/Documents/index.xml"));
+			inputFile = new BufferedReader(new FileReader("//Users/sigurdbergsvela/Documents/index.sxy"));
 		} catch (FileNotFoundException e) {
 			System.out.println(e.getMessage());
 			return;
 		}
 		try {
-			xmlRootNode = SXYML.parseFile(inputFile);
+			sxymlRootNode = SXYML.parseFile(inputFile);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(e.getMessage());
+			return;
 		}
 		
-		xmlRootNode.printTree();
+		//sxymlRootNode.printTree();
  	}
 }

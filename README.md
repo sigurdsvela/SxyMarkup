@@ -14,6 +14,7 @@ The syntax is simple
 
 Example
 
+<p>
 <code>
 	@html {
 		@head {
@@ -43,3 +44,4 @@ Example
 		}
 	}
 </code>
+</p>

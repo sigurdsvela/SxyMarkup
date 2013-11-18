@@ -13,6 +13,7 @@ The syntax is simple
 <b>
 	Example:
 </b>
+<pre>
 <code>
 	@html {
 		@head {
@@ -42,3 +43,4 @@ The syntax is simple
 		}
 	}
 </code>
+</pre>

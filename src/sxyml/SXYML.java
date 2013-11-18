@@ -47,11 +47,6 @@ public class SXYML {
 		TokenReader.Token token;
 		
 		while ((token = tokens.nextToken()) != null) {
-			if (!token.value().matches("\\s+")) {
-				String lc = (token.line() + ":" + token.column());
-				println(lc + "\t" + token.value());
-			}
-				
 			if (token.value().compareTo("\\") == 0 && !escape) {
 				escape = true;
 				token = tokens.nextToken(); //Skip this token, it's just an escape character
@@ -74,6 +69,8 @@ public class SXYML {
 					} else if (token.value().compareTo("@") == 0 && !escape) {
 						state = STATE.DefiningTagType;
 						currentTextNode = null;
+					} else if (token.value().matches("\\s*")) {
+						//Ignore Whitespaces
 					} else {
 						if (currentNode == null) {
 							syntaxError("Text is not allowed outside of any element", token);
@@ -121,7 +118,7 @@ public class SXYML {
 					}
 					break;
 					
-				case DefiningAttributeValue:
+				case DefiningAttributeValue: 
 					if (insideQuote) {
 						definingAttrValue += token.value();
 					} else if (token.value().matches("\\s+") || token.value().compareTo("{") == 0 || token.value().compareTo(";") == 0) {

@@ -19,6 +19,8 @@ public class Main {
 	}
 	
 	public Main(String[] args) {
+		
+		
 		BufferedReader inputFile = null;
 		try {
 			inputFile = new BufferedReader(new FileReader("//Users/sigurdbergsvela/Documents/index.sxy"));

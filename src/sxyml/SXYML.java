@@ -33,6 +33,7 @@ public class SXYML {
 		
 		Element rootNode    = null;
 		Element currentNode = null;
+		TextNode currentTextNode = null;
 
 		String definingAttrKey = "";
 		String definingAttrValue = "";
@@ -48,12 +49,12 @@ public class SXYML {
 		while ((token = tokens.nextToken()) != null) {
 			if (!token.value().matches("\\s+")) {
 				String lc = (token.line() + ":" + token.column());
-				println(lc + "\t" + token.value());
+				//println(lc + "\t" + token.value());
 			}
 				
-			if (token.value().compareTo("\\") == 0) {
+			if (token.value().compareTo("\\") == 0 && !escape) {
 				escape = true;
-				continue;
+				tokens.nextToken(); //Skip this token, it's just an escape character
 			} else {
 				escape = false;
 			}
@@ -63,19 +64,33 @@ public class SXYML {
 				continue;
 			}
 			
+			
 			switch (state) {
 			
 				case InsideTag:
-					if (isWhiteSpace(token.value())) {
-						
-					} else if (token.value().compareTo("}")==0 && !escape) {
+					println("Inside tag");
+					if (token.value().compareTo("}")==0 && !escape) {
 						currentNode = currentNode.getParrent();
-					} else if (token.value().compareTo("@") == 0) {
+						currentTextNode = null;
+					} else if (token.value().compareTo("@") == 0 && !escape) {
 						state = STATE.DefiningTagType;
+						currentTextNode = null;
+					} else {
+						if (currentNode == null) {
+							syntaxError("Text is not allowed outside of any element", token);
+							continue;
+						}
+						
+						if (currentTextNode == null) {
+							currentTextNode = currentNode.addTextNode(token.value());
+						} else {
+							currentTextNode.pushContent(token.value());
+						}
 					}
 					break;
 			
 				case DefiningTagType:
+					println("DefiningTagType");
 					if (token.value().matches("\\w+")) {
 						Element temp = new Element(token.value());
 						if (rootNode == null) {
@@ -90,6 +105,7 @@ public class SXYML {
 					break;
 					
 				case DefiningAttributes:
+					println("DefiningAttributes");
 					if (token.value().matches("\\w+")) {
 						definingAttrKey = token.value();
 					} else if (token.value().compareTo(":") == 0) {
@@ -103,12 +119,14 @@ public class SXYML {
 					break;
 					
 				case DefiningAttributeValue:
+					println("DefiningAttributeValue");
 					if (insideQuote) {
 						definingAttrValue += token.value();
 					} else if (token.value().matches("\\s+")) {
+						currentNode.addToAttribute(definingAttrKey, definingAttrValue);
 						state = STATE.DefiningAttributes;
 					} else {
-						syntaxError("Unregognized token " + token.value() + "", token);
+						syntaxError("Unregognized token \'" + token.value() + "\'", token);
 					}
 					break;
 			}

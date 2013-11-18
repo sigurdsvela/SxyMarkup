@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class Element {
+public class Element extends Node{
 		private HashMap<String, ArrayList<String>> attributes;
-		private ArrayList<String> textNodes;
+		private ArrayList<TextNode> textNodes;
 		private String tagType;
 		private Element parrent;
 		private boolean isVoid;
@@ -15,7 +15,7 @@ public class Element {
 		public Element(String tagType) {
 			attributes = new HashMap<String, ArrayList<String>>();
 			children = new ArrayList<Element>();
-			textNodes = new ArrayList<String>();
+			textNodes = new ArrayList<TextNode>();
 			this.tagType = tagType;
 			isVoid = false;
 		}
@@ -28,10 +28,18 @@ public class Element {
 			return children;
 		}
 		
+		/**
+		 * Prints the node tree
+		 */
 		public void printTree() {
 			printTree("");
 		}
 		
+		/**
+		 * Prints the node tree from here
+		 * 
+		 * @param iind The indent
+		 */
 		public void printTree(String iind) {
 			String ind = iind;
 			for (Element element:children) {
@@ -207,18 +215,40 @@ public class Element {
 			removeElements(new ArrayList<Element>(Arrays.<Element>asList(elements)));
 		}
 		
-		public void addTextNode(String content) {
-			
+		/**
+		 * Adds a text node a returns said text node
+		 * 
+		 * @param content
+		 * @return
+		 */
+		public TextNode addTextNode(String content) {
+			TextNode temp = new TextNode(content);
+			textNodes.add(temp);
+			return temp;
+		}
+		
+		/**
+		 * Adds a text node a returns said text node
+		 * 
+		 * @return
+		 */
+		public TextNode addTextNode() {
+			return addTextNode("");
 		}
 		
 		public void getTextNode(int id) throws NullPointerException{
 			textNodes.get(id);
 		}
 		
+		/**
+		 * Get all textnodes as one string
+		 * 
+		 * @return
+		 */
 		public String getTextNodesAsString() {
 			String rtrn = "";
-			for (String string : textNodes) {
-				rtrn += string;
+			for (TextNode textNode : textNodes) {
+				rtrn += textNode.getContent();
 			}
 			return rtrn;
 		}

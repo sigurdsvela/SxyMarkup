@@ -16,6 +16,7 @@ public class TokenReader {
 	
 	private String delimiterRegex(String[] delims) {
 		String pattern = "";
+		pattern = "(?<=\\\\)(?<=\\.)|";
 		for (String delim: delims) {
 			pattern += "(?<=" + delim + ")|(?=" + delim + ")|";
 		}
@@ -68,6 +69,7 @@ public class TokenReader {
 		public Token(String tokenValue, int tokenLine, int tokenColumn) {
 			column = tokenColumn;
 			line = tokenLine;
+			
 			value = tokenValue;
 		}
 		

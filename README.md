@@ -12,8 +12,8 @@ The syntax is simple
 		content
 	}
 }
-<code>
-<pre>
+</code>
+</pre>
 <b>
 	Example:
 </b>

@@ -14,7 +14,7 @@ public class SXYMLTokenReader {
 	private int currentColumnPosition;
 	private Token currentToken;
 	
-	public String delimiterRegex(String[] delims) {
+	private String delimiterRegex(String[] delims) {
 		String pattern = "";
 		for (String delim: delims) {
 			pattern += "(?<=" + delim + ")|(?=" + delim + ")|";

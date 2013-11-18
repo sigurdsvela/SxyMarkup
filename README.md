@@ -3,6 +3,8 @@ A kinda no-purpos markup language that compiles to html.
 The syntax is simple
 
 
+<pre>
+<code>
 @TAGNAME [attrkey:attrvalue ]... {
 	COntent
 	
@@ -10,6 +12,8 @@ The syntax is simple
 		content
 	}
 }
+<code>
+<pre>
 <b>
 	Example:
 </b>

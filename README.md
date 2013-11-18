@@ -10,11 +10,9 @@ The syntax is simple
 		content
 	}
 }
-
-
-Example
-
-<p>
+<b>
+	Example:
+</b>
 <code>
 	@html {
 		@head {
@@ -44,4 +42,3 @@ Example
 		}
 	}
 </code>
-</p>

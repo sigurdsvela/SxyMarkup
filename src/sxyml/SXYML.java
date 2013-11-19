@@ -34,8 +34,8 @@ public class SXYML {
 		Element currentNode = null;
 		TextNode currentTextNode = null;
 
-		String definingAttrKey = "";
-		String definingAttrValue = "";
+		String definingAttrKey = null;
+		String definingAttrValue = null;
 		
 		/**
 		 * Are we currently inside a quote
@@ -102,7 +102,13 @@ public class SXYML {
 					if (token.value().matches("\\w+")) {
 						definingAttrKey = token.value();
 					} else if (token.value().compareTo(":") == 0) {
-						state = STATE.DefiningAttributeValue;
+						if (definingAttrKey == null) {
+							syntaxError("Expected attribute key got ':'", token);
+						} else {
+							state = STATE.DefiningAttributeValue;
+						}
+					} else if (token.value().matches("\\s*")) {
+						//Ignore Whitespaces
 					} else if (token.value().compareTo("{") == 0) {
 						state = STATE.InsideTag;
 						definingAttrValue = "";
@@ -111,23 +117,27 @@ public class SXYML {
 						definingAttrValue = "";
 						currentNode.setVoid();
 						currentNode = currentNode.getParrent();
-					} else if (isWhiteSpace(token.value())) {
-						//Ignore whitespaces here
 					} else {
 						syntaxError("Unregognized token "+ token.value() + "", token);
 					}
 					break;
 					
-				case DefiningAttributeValue: 
+				case DefiningAttributeValue:
+					if (!insideQuote && definingAttrValue == null && token.value().matches("\\s*")) //IF we havent started to declare the value yet, ignore spaces
+						continue;
+					
 					if (insideQuote) {
+						if (definingAttrValue == null)
+							definingAttrValue = "";
 						definingAttrValue += token.value();
-					} else if (token.value().matches("\\s+") || token.value().compareTo("{") == 0 || token.value().compareTo(";") == 0) {
+					} else if (token.value().matches("\\s*") || token.value().compareTo("{") == 0 || token.value().compareTo(";") == 0) {
 						//This is a very hackish solution duplicating code like this
 						//find a better way to be able to pick up on a ; without the " "
 						//Delimiter. Might need so major reconstruction
 						currentNode.addToAttribute(definingAttrKey, definingAttrValue);
 						state = STATE.DefiningAttributes;
-						definingAttrValue = "";
+						definingAttrValue = null;
+						definingAttrKey  = null;
 						
 						if (token.value().compareTo("{") == 0) {
 							state = STATE.InsideTag;

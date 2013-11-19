@@ -27,6 +27,7 @@ public class SXYML {
 	public static Element parseFile(BufferedReader file) throws IOException {
 		TokenReader tokens = new TokenReader(file);
 
+		
 		STATE state = STATE.InsideTag;
 		
 		Element rootNode    = null;
@@ -109,6 +110,7 @@ public class SXYML {
 						state = STATE.InsideTag;
 						definingAttrValue = "";
 						currentNode.setVoid();
+						currentNode = currentNode.getParrent();
 					} else if (isWhiteSpace(token.value())) {
 						//Ignore whitespaces here
 					} else {
@@ -125,6 +127,7 @@ public class SXYML {
 						//Delimiter. Might need so major reconstruction
 						currentNode.addToAttribute(definingAttrKey, definingAttrValue);
 						state = STATE.DefiningAttributes;
+						definingAttrValue = "";
 						
 						if (token.value().compareTo("{") == 0) {
 							state = STATE.InsideTag;
@@ -133,6 +136,7 @@ public class SXYML {
 							state = STATE.InsideTag;
 							definingAttrValue = "";
 							currentNode.setVoid();
+							currentNode = currentNode.getParrent();
 						} 
 					} else {
 						syntaxError("Unregognized token \'" + token.value() + "\'", token);

@@ -2,6 +2,8 @@ package sxyml;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class SXYML {
 	
@@ -43,6 +45,8 @@ public class SXYML {
 		boolean insideQuote = false;
 		boolean escape = false;
 		
+		HashMap<String, String> definingAttrKeyWithoutValue = new HashMap<String, String>();
+		
 		TokenReader.Token token;
 		
 		while ((token = tokens.nextToken()) != null) {
@@ -68,7 +72,7 @@ public class SXYML {
 					} else if (token.value().compareTo("@") == 0 && !escape) {
 						state = STATE.DefiningTagType;
 						currentTextNode = null;
-					} else if (token.value().matches("\\s*")) {
+					} else if (token.value().matches("\\s*") && currentTextNode == null) {
 						//Ignore Whitespaces
 					} else {
 						if (currentNode == null) {
@@ -100,23 +104,34 @@ public class SXYML {
 					
 				case DefiningAttributes:
 					if (token.value().matches("\\w+")) {
-						definingAttrKey = token.value();
+						if (definingAttrKey == null)
+							definingAttrKey = "";
+						definingAttrKey += token.value(); //Incase one key get slit up into several tokens.
+						
+						
 					} else if (token.value().compareTo(":") == 0) {
 						if (definingAttrKey == null) {
-							syntaxError("Expected attribute key got ':'", token);
+							syntaxError("Expected attribute key, got ':'", token);
 						} else {
+							if (definingAttrKeyWithoutValue.containsKey(definingAttrKey))
+								definingAttrKeyWithoutValue.remove(definingAttrKey);
 							state = STATE.DefiningAttributeValue;
 						}
+					
+					
 					} else if (token.value().matches("\\s*")) {
-						//Ignore Whitespaces
-					} else if (token.value().compareTo("{") == 0) {
+						
+						
+					
+					} else if (token.value().compareTo("{") == 0 || token.value().compareTo(";") == 0) {
 						state = STATE.InsideTag;
 						definingAttrValue = "";
-					} else if (token.value().compareTo(";") == 0) {
-						state = STATE.InsideTag;
-						definingAttrValue = "";
-						currentNode.setVoid();
-						currentNode = currentNode.getParrent();
+						if (token.value().compareTo(";") == 0) {
+							currentNode.setVoid();
+							currentNode = currentNode.getParrent();
+						}
+					
+					
 					} else {
 						syntaxError("Unregognized token "+ token.value() + "", token);
 					}
@@ -130,6 +145,8 @@ public class SXYML {
 						if (definingAttrValue == null)
 							definingAttrValue = "";
 						definingAttrValue += token.value();
+					
+					
 					} else if (token.value().matches("\\s*") || token.value().compareTo("{") == 0 || token.value().compareTo(";") == 0) {
 						//This is a very hackish solution duplicating code like this
 						//find a better way to be able to pick up on a ; without the " "
@@ -146,6 +163,8 @@ public class SXYML {
 							currentNode.setVoid();
 							currentNode = currentNode.getParrent();
 						} 
+					
+					
 					} else {
 						syntaxError("Unregognized token \'" + token.value() + "\'", token);
 					}

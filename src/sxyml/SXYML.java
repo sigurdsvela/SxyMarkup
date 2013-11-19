@@ -131,10 +131,8 @@ public class SXYML {
 						
 						if (token.value().compareTo("{") == 0) {
 							state = STATE.InsideTag;
-							definingAttrValue = "";
 						} else if (token.value().compareTo(";") == 0) {
 							state = STATE.InsideTag;
-							definingAttrValue = "";
 							currentNode.setVoid();
 							currentNode = currentNode.getParrent();
 						} 

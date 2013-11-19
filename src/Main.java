@@ -60,7 +60,7 @@ public class Main {
 		try {
 			PrintWriter writer = new PrintWriter(arguments.get("-o"), "UTF-8");
 			
-			sxymlRootNode.printTree(writer, true);
+			sxymlRootNode.printTree(true);
 			
 			writer.close();
 		} catch (FileNotFoundException e) {

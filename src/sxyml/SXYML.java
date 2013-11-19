@@ -73,10 +73,10 @@ public class SXYML {
 						state = STATE.DefiningTagType;
 						currentTextNode = null;
 					} else if (token.value().matches("\\s*") && currentTextNode == null) {
-						//Ignore Whitespaces
+						//Ignore Whitespaces when not a textnode
 					} else {
 						if (currentNode == null) {
-							syntaxError("Text is not allowed outside of any element", token);
+							syntaxError("Text is not allowed outside of of the root element.", token);
 							continue;
 						}
 						

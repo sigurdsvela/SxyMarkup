@@ -3,8 +3,6 @@ package sxyml;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-import com.sun.tools.internal.ws.wsdl.framework.Defining;
-
 public class SXYML {
 	
 	private enum STATE {
@@ -14,9 +12,9 @@ public class SXYML {
 		DefiningAttributeValue
 	}
 	
-	private static void println(String msg) {
-		System.out.println(msg);
-	}
+//	private static void println(String msg) {
+//		System.out.println(msg);
+//	}
 	
 	public static boolean isWhiteSpace(String string) {
 		return (string.matches("\\s*"));

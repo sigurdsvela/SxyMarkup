@@ -1,5 +1,6 @@
 package sxyml;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -31,8 +32,27 @@ public class Element extends Node{
 		/**
 		 * Prints the node tree
 		 */
-		public void printTree() {
-			printTree("");
+		public void printTree(PrintWriter writer, boolean includeThis) {
+			if (includeThis) {
+				writer.print("<" + getTagName());
+				for (String key : getAttributes().keySet()) {
+					writer.print(" ");
+					String values = "";
+					boolean isFirst = true;
+					for (String value : getAttributes().get(key)) {
+						values += (isFirst ? "" : " ") + value;
+						isFirst = false;
+					}
+					writer.print(key + "=\""+values+"\"");
+					writer.print(" ");
+				}
+				writer.println(">");
+				writer.println(getTextNodesAsString());
+			}
+			printTree(writer, "");
+			if (includeThis) {
+				writer.println("</" + getTagName() + ">");
+			}
 		}
 		
 		/**
@@ -40,24 +60,31 @@ public class Element extends Node{
 		 * 
 		 * @param iind The indent
 		 */
-		public void printTree(String iind) {
+		public void printTree(PrintWriter writer, String iind) {
 			String ind = iind;
 			if (isVoid) {
 				return;
 			}
 			for (Element element:children) {
-				System.out.print(ind + "<" + element.getTagName());
+				writer.print(ind + "<" + element.getTagName());
 				for (String key : element.getAttributes().keySet()) {
-					System.out.print(" ");
-					System.out.print(key + "=\""+element.getAttributes().get(key)+"\"");
-					System.out.print(" ");
+					writer.print(" ");
+					String values = "";
+					boolean isFirst = true;
+					for (String value : element.getAttributes().get(key)) {
+						values += (isFirst ? "" : " ") + value;
+						isFirst = false;
+					}
+					
+					writer.print(key + "=\""+values+"\"");
+					writer.print(" ");
 				}
-			    System.out.println((element.isVoid() ? " /" : "") + ">");
-			    System.out.println(ind + "  " + element.getTextNodesAsString());
-				element.printTree(ind + "  ");
+			    writer.println((element.isVoid() ? " /" : "") + ">");
+			    writer.println(ind + "  " + element.getTextNodesAsString());
+				element.printTree(writer, ind + "  ");
 				
 				if (!element.isVoid())
-					System.out.println(ind + "</" + element.getTagName() + ">" );
+					writer.println(ind + "</" + element.getTagName() + ">" );
 			}
 		}
 		
@@ -115,6 +142,9 @@ public class Element extends Node{
 		
 		
 		public boolean hasChilderen() {
+			if (isVoid) {
+				return false;
+			}
 			return !children.isEmpty();
 		}
 		

@@ -9,6 +9,7 @@ public class TokenReader {
 	private int currentLineNumber;
 	private String[] tokens;
 	private int currentTokenPosition;
+	@SuppressWarnings("unused")
 	private boolean eol;
 	
 	private int currentColumnPosition;

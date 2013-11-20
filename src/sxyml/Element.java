@@ -11,11 +11,11 @@ public class Element extends Node{
 		private String tagType;
 		private Element parrent;
 		private boolean isVoid;
-		private ArrayList<Element> children;
+		private ArrayList<Node> children;
 		
 		public Element(String tagType) {
 			attributes = new HashMap<String, ArrayList<String>>();
-			children = new ArrayList<Element>();
+			children = new ArrayList<Node>();
 			textNodes = new ArrayList<TextNode>();
 			this.tagType = tagType;
 			isVoid = false;
@@ -29,29 +29,32 @@ public class Element extends Node{
 			return children;
 		}
 		
+		
+		
+		
 		/**
 		 * Prints the node tree
 		 */
-		public void printTree(PrintWriter writer, boolean includeThis) {
+		public void printTree(boolean includeThis) {
 			if (includeThis) {
-				writer.print("<" + getTagName());
+				System.out.print("<" + getTagName());
 				for (String key : getAttributes().keySet()) {
-					writer.print(" ");
+					System.out.print(" ");
 					String values = "";
 					boolean isFirst = true;
 					for (String value : getAttributes().get(key)) {
 						values += (isFirst ? "" : " ") + value;
 						isFirst = false;
 					}
-					writer.print(key + "=\""+values+"\"");
-					writer.print(" ");
+					System.out.print(key + "=\""+values+"\"");
+					System.out.print(" ");
 				}
-				writer.println(">");
-				writer.println(getTextNodesAsString());
+				System.out.println(">");
+				System.out.println(getTextNodesAsString());
 			}
-			printTree(writer, "");
+			printTree("");
 			if (includeThis) {
-				writer.println("</" + getTagName() + ">");
+				System.out.println("</" + getTagName() + ">");
 			}
 		}
 		
@@ -60,15 +63,15 @@ public class Element extends Node{
 		 * 
 		 * @param iind The indent
 		 */
-		public void printTree(PrintWriter writer, String iind) {
+		public void printTree(String iind) {
 			String ind = iind;
 			if (isVoid) {
 				return;
 			}
 			for (Element element:children) {
-				writer.print(ind + "<" + element.getTagName());
+				System.out.print(ind + "<" + element.getTagName());
 				for (String key : element.getAttributes().keySet()) {
-					writer.print(" ");
+					System.out.print(" ");
 					String values = "";
 					boolean isFirst = true;
 					for (String value : element.getAttributes().get(key)) {
@@ -76,15 +79,15 @@ public class Element extends Node{
 						isFirst = false;
 					}
 					
-					writer.print(key + "=\""+values+"\"");
-					writer.print(" ");
+					System.out.print(key + "=\""+values+"\"");
+					System.out.print(" ");
 				}
-			    writer.println((element.isVoid() ? " /" : "") + ">");
-			    writer.println(ind + "  " + element.getTextNodesAsString());
-				element.printTree(writer, ind + "  ");
+			    System.out.println((element.isVoid() ? " /" : "") + ">");
+			    System.out.println(ind + "  " + element.getTextNodesAsString());
+				element.printTree(ind + "  ");
 				
 				if (!element.isVoid())
-					writer.println(ind + "</" + element.getTagName() + ">" );
+					System.out.println(ind + "</" + element.getTagName() + ">" );
 			}
 		}
 		

@@ -2,6 +2,8 @@ package sxyml;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class SXYML {
 	
@@ -27,20 +29,23 @@ public class SXYML {
 	public static Element parseFile(BufferedReader file) throws IOException {
 		TokenReader tokens = new TokenReader(file);
 
+		
 		STATE state = STATE.InsideTag;
 		
 		Element rootNode    = null;
 		Element currentNode = null;
 		TextNode currentTextNode = null;
 
-		String definingAttrKey = "";
-		String definingAttrValue = "";
+		String definingAttrKey = null;
+		String definingAttrValue = null;
 		
 		/**
 		 * Are we currently inside a quote
 		 */
 		boolean insideQuote = false;
 		boolean escape = false;
+		
+		HashMap<String, String> definingAttrKeyWithoutValue = new HashMap<String, String>();
 		
 		TokenReader.Token token;
 		
@@ -67,11 +72,11 @@ public class SXYML {
 					} else if (token.value().compareTo("@") == 0 && !escape) {
 						state = STATE.DefiningTagType;
 						currentTextNode = null;
-					} else if (token.value().matches("\\s*")) {
-						//Ignore Whitespaces
+					} else if (token.value().matches("\\s*") && currentTextNode == null) {
+						//Ignore Whitespaces when not a textnode
 					} else {
 						if (currentNode == null) {
-							syntaxError("Text is not allowed outside of any element", token);
+							syntaxError("Text is not allowed outside of of the root element.", token);
 							continue;
 						}
 						
@@ -99,41 +104,67 @@ public class SXYML {
 					
 				case DefiningAttributes:
 					if (token.value().matches("\\w+")) {
-						definingAttrKey = token.value();
+						if (definingAttrKey == null)
+							definingAttrKey = "";
+						definingAttrKey += token.value(); //Incase one key get slit up into several tokens.
+						
+						
 					} else if (token.value().compareTo(":") == 0) {
-						state = STATE.DefiningAttributeValue;
-					} else if (token.value().compareTo("{") == 0) {
+						if (definingAttrKey == null) {
+							syntaxError("Expected attribute key, got ':'", token);
+						} else {
+							if (definingAttrKeyWithoutValue.containsKey(definingAttrKey))
+								definingAttrKeyWithoutValue.remove(definingAttrKey);
+							state = STATE.DefiningAttributeValue;
+						}
+					
+					
+					} else if (token.value().matches("\\s*")) {
+						
+						
+					
+					} else if (token.value().compareTo("{") == 0 || token.value().compareTo(";") == 0) {
 						state = STATE.InsideTag;
 						definingAttrValue = "";
-					} else if (token.value().compareTo(";") == 0) {
-						state = STATE.InsideTag;
-						definingAttrValue = "";
-						currentNode.setVoid();
-					} else if (isWhiteSpace(token.value())) {
-						//Ignore whitespaces here
+						if (token.value().compareTo(";") == 0) {
+							currentNode.setVoid();
+							currentNode = currentNode.getParrent();
+						}
+					
+					
 					} else {
 						syntaxError("Unregognized token "+ token.value() + "", token);
 					}
 					break;
 					
-				case DefiningAttributeValue: 
+				case DefiningAttributeValue:
+					if (!insideQuote && definingAttrValue == null && token.value().matches("\\s*")) //IF we havent started to declare the value yet, ignore spaces
+						continue;
+					
 					if (insideQuote) {
+						if (definingAttrValue == null)
+							definingAttrValue = "";
 						definingAttrValue += token.value();
-					} else if (token.value().matches("\\s+") || token.value().compareTo("{") == 0 || token.value().compareTo(";") == 0) {
+					
+					
+					} else if (token.value().matches("\\s*") || token.value().compareTo("{") == 0 || token.value().compareTo(";") == 0) {
 						//This is a very hackish solution duplicating code like this
 						//find a better way to be able to pick up on a ; without the " "
 						//Delimiter. Might need so major reconstruction
 						currentNode.addToAttribute(definingAttrKey, definingAttrValue);
 						state = STATE.DefiningAttributes;
+						definingAttrValue = null;
+						definingAttrKey  = null;
 						
 						if (token.value().compareTo("{") == 0) {
 							state = STATE.InsideTag;
-							definingAttrValue = "";
 						} else if (token.value().compareTo(";") == 0) {
 							state = STATE.InsideTag;
-							definingAttrValue = "";
 							currentNode.setVoid();
+							currentNode = currentNode.getParrent();
 						} 
+					
+					
 					} else {
 						syntaxError("Unregognized token \'" + token.value() + "\'", token);
 					}

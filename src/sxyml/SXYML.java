@@ -11,7 +11,8 @@ public class SXYML {
 		InsideTag, //When Textnodes may appear
 		DefiningTagType, //After an @
 		DefiningAttributes,
-		DefiningAttributeValue
+		DefiningAttributeValue,
+		PreAttributeColonSpace
 	}
 	
 //	private static void println(String msg) {
@@ -36,16 +37,25 @@ public class SXYML {
 		Element currentNode = null;
 		TextNode currentTextNode = null;
 
+		/**
+		 * The current attribute key being defined. Null if none
+		 */
 		String definingAttrKey = null;
+		
+		/**
+		 * The current attribute value being defined. Null if none
+		 */
 		String definingAttrValue = null;
 		
 		/**
-		 * Are we currently inside a quote
+		 * Are we currently inside a quote?
 		 */
 		boolean insideQuote = false;
-		boolean escape = false;
 		
-		HashMap<String, String> definingAttrKeyWithoutValue = new HashMap<String, String>();
+		/**
+		 * Is the current token escaped?
+		 */
+		boolean escape = false;
 		
 		TokenReader.Token token;
 		
@@ -62,6 +72,8 @@ public class SXYML {
 				continue;
 			}
 			
+			
+			//System.out.println(state);
 			
 			switch (state) {
 			
@@ -88,8 +100,10 @@ public class SXYML {
 					}
 					break;
 			
+					
+					
 				case DefiningTagType:
-					if (token.value().matches("\\w+")) {
+					if (token.value().matches("\\w+") || escape) {
 						Element temp = new Element(token.value());
 						if (rootNode == null) {
 							rootNode = temp;
@@ -102,30 +116,37 @@ public class SXYML {
 					}
 					break;
 					
+					
+					
 				case DefiningAttributes:
-					if (token.value().matches("\\w+")) {
+					if (token.value().matches("\\w+") || escape) {
 						if (definingAttrKey == null)
 							definingAttrKey = "";
-						definingAttrKey += token.value(); //Incase one key get slit up into several tokens.
+						definingAttrKey += token.value(); //In case one key get slit up into several tokens. Can't happen now as its must match \\w+, but you know, for the future
 						
 						
 					} else if (token.value().compareTo(":") == 0) {
 						if (definingAttrKey == null) {
 							syntaxError("Expected attribute key, got ':'", token);
 						} else {
-							if (definingAttrKeyWithoutValue.containsKey(definingAttrKey))
-								definingAttrKeyWithoutValue.remove(definingAttrKey);
 							state = STATE.DefiningAttributeValue;
 						}
 					
 					
-					} else if (token.value().matches("\\s*")) {
-						
+					} else if (token.value().matches("\\s+")) {
+						if (definingAttrKey != null) {
+							state = STATE.PreAttributeColonSpace;
+						} //Else ignore
 						
 					
 					} else if (token.value().compareTo("{") == 0 || token.value().compareTo(";") == 0) {
+						//TODO If the current defining attribute is not set, it is a simple syntax attribute
 						state = STATE.InsideTag;
+						if (definingAttrKey != null) {
+							currentNode.addToAttribute(definingAttrKey, definingAttrKey);
+						}
 						definingAttrValue = "";
+						definingAttrKey = null;
 						if (token.value().compareTo(";") == 0) {
 							currentNode.setVoid();
 							currentNode = currentNode.getParrent();
@@ -133,9 +154,36 @@ public class SXYML {
 					
 					
 					} else {
-						syntaxError("Unregognized token "+ token.value() + "", token);
+						syntaxError("Unexpected token "+ token.value() + "", token);
 					}
 					break;
+					
+					
+				case PreAttributeColonSpace: // from the pipes:  @div attr | :| value
+					if (token.value().matches("\\w+") || escape) {
+						currentNode.addToAttribute(definingAttrKey, definingAttrKey); //Simple syntax for the previous one
+						definingAttrKey = token.value();
+						state = STATE.DefiningAttributes;
+					} else if (token.value().matches("\\s+")) {
+						//Ignore Spaces
+					} else if (token.value().compareTo(";") == 0 || token.value().compareTo("{") == 0) {
+						state = STATE.InsideTag;
+						currentNode.addToAttribute(definingAttrKey, definingAttrKey); //Simple syntax attribute
+						definingAttrKey = null;
+						if (token.value().compareTo(";") == 0) {
+							currentNode.setVoid();
+							currentNode = currentNode.getParrent();
+						}
+					} else if (token.value().compareTo(":") == 0) {
+						definingAttrValue = null;
+						state = STATE.DefiningAttributeValue;
+					} else {
+						syntaxError("Unexpected token " + token.value(), token);
+					}
+					
+					break;
+				
+					
 					
 				case DefiningAttributeValue:
 					if (!insideQuote && definingAttrValue == null && token.value().matches("\\s*")) //IF we havent started to declare the value yet, ignore spaces
@@ -150,10 +198,9 @@ public class SXYML {
 					} else if (token.value().matches("\\s*") || token.value().compareTo("{") == 0 || token.value().compareTo(";") == 0) {
 						//This is a very hackish solution duplicating code like this
 						//find a better way to be able to pick up on a ; without the " "
-						//Delimiter. Might need so major reconstruction
+						//Delimiter. Might need some major reconstruction
 						currentNode.addToAttribute(definingAttrKey, definingAttrValue);
 						state = STATE.DefiningAttributes;
-						definingAttrValue = null;
 						definingAttrKey  = null;
 						
 						if (token.value().compareTo("{") == 0) {

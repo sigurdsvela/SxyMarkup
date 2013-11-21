@@ -3,12 +3,12 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-
 import sxyml.Element;
 import sxyml.SXYML;
+import sxyml.output.FileOutput;
+import sxyml.output.Output;
+import sxyml.output.SystemOutput;
 
 public class Main {
 	Element sxymlRootNode;
@@ -19,37 +19,47 @@ public class Main {
 	public static void main(String[] args) {
 		new Main(args);
 	}
+
 	
 	public Main(String[] args) {
-		String currentDir = System.getProperty("user.dir");
+		Arguments options = new Arguments(args);
 		
-		HashMap<String, String>arguments = new HashMap<String, String>();
-		arguments.put("-i", "");
-		arguments.put("-o", "");
+		try {
+			options.registerOption("--input-file");
+			options.registerOption("--output-file");
+			options.registerOption("--tab-size");
+			options.registerOption("--html-style-void");
+			options.registerOptionAlias("-o", "--output-file");
+			options.registerOptionAlias("-i", "--input-file");
+		} catch (Exception e){
+			e.printStackTrace();
+		}
 		
-		String defining = null;
-		for (String arg : args) {
-			if (defining == null) {
-				if (!arguments.containsKey(arg)) {
-					System.out.println("Invalig argument " + arg);
-					System.exit(1);
-				} else {
-					defining = arg;
-				}
-			} else {
-				arguments.put(defining, arg);
-				defining = null;
+		try {
+			options.parse();
+			if (options.get("--tab-size") == null) {
+				options.set("--tab-size", "4");
 			}
+		} catch(Arguments.KeyException e) {
+			System.out.println("The option \"" + e.key() + "\" is not a valid option.");
+			System.exit(1);
 		}
 		
 		
 		BufferedReader inputFile = null;
+		
+		
 		try {
-			inputFile = new BufferedReader(new FileReader(arguments.get("-i")));
+			inputFile = new BufferedReader(new FileReader(options.get("--input-file")));
 		} catch (FileNotFoundException e) {
 			System.out.println(e.getMessage());
 			return;
+		} catch (Arguments.KeyDoesNotExistException e) {
+			System.out.println(e.getMessage());
+			return;
 		}
+		
+		
 		try {
 			sxymlRootNode = SXYML.parseFile(inputFile);
 		} catch (IOException e) {
@@ -58,14 +68,21 @@ public class Main {
 		}
 		
 		try {
-			PrintWriter writer = new PrintWriter(arguments.get("-o"), "UTF-8");
+			Output output;
+			if (options.get("--output-file") == null) {
+				output = new SystemOutput();
+			} else {
+				output = new FileOutput(options.get("--output-file"));
+			}
 			
-			sxymlRootNode.printTree(true);
+			sxymlRootNode.print(output, Integer.parseInt(options.get("--tab-size")));
 			
-			writer.close();
+			output.close();
 		} catch (FileNotFoundException e) {
+			System.out.println(e.getMessage());
 			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
+		} catch (Arguments.KeyException e) {
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
 		

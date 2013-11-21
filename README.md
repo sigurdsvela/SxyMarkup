@@ -1,20 +1,37 @@
+The Sxy Markup Language
+=======================
+<br>
 You more than welcome to join the development of this compiler :)
-
-My email, if you have any questions or just wan't to talk to someone.
+<br>
+My email. if you have any questions or just wan't to talk to someone.<br>
 sigurd@bergsvela.com
 
-Rules
-	1: If you use this software and modify it, you are required to upload you modifications here, and share it with everybody.
-	2: Remember to read rule 1. :)
+How to use it<br>
+1. Go to releases, and download the latest *non beta* release.
+2. In the folder, you will find a SxyML.jar file, this is the only one you need, unless you want to develop Sxy further.
+3. Run the jar file with the argument -i *sxy file* -o *html ouput*. To do this on a Mac/Linux you would open your terminal and write <pre><code>java -jar SxyML.jar -i myfile.sxy -o myfile.html </code></pre> 
 
-A kinda no-purpos markup language that compiles to html.
+
+Parameters:
+1. -i *input file* (Required) Spesifies the input file.
+2. -o *output file* Spesifies the outfile. If no output is spesified, the result will be cout'ed.
+3. --indent-size *int* Spesifies the size of indent in the output.
+4. --html-style-void Spesifies that void elements should be printed as <link ...> instead of <link .../>
+
+
+
+Rules:
+1. If you use this software and modify it, you are required to upload you modifications here, and share it with everybody.
+2. Remember to read rule 1. :)
+
+<br>
 
 The syntax is simple
 
 
 <pre>
 <code>
-@TAGNAME [attrkey:[attrvalue] ]... {
+@TAGNAME \[attrkey:\[attrvalue\] \]... {
 	COntent
 	
 	@TAGELEMENT {

@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import sxyml.output.Output;
 
 public class Element extends Node{
 		private HashMap<String, ArrayList<String>> attributes;
@@ -11,11 +12,11 @@ public class Element extends Node{
 		private String tagType;
 		private Element parrent;
 		private boolean isVoid;
-		private ArrayList<Node> children;
+		private ArrayList<Element> children;
 		
 		public Element(String tagType) {
 			attributes = new HashMap<String, ArrayList<String>>();
-			children = new ArrayList<Node>();
+			children = new ArrayList<Element>();
 			textNodes = new ArrayList<TextNode>();
 			this.tagType = tagType;
 			isVoid = false;
@@ -29,67 +30,66 @@ public class Element extends Node{
 			return children;
 		}
 		
-		
-		
-		
-		/**
-		 * Prints the node tree
-		 */
-		public void printTree(boolean includeThis) {
-			if (includeThis) {
-				System.out.print("<" + getTagName());
-				for (String key : getAttributes().keySet()) {
-					System.out.print(" ");
-					String values = "";
-					boolean isFirst = true;
-					for (String value : getAttributes().get(key)) {
-						values += (isFirst ? "" : " ") + value;
-						isFirst = false;
-					}
-					System.out.print(key + "=\""+values+"\"");
-					System.out.print(" ");
-				}
-				System.out.println(">");
-				System.out.println(getTextNodesAsString());
+		private String indent(int size) {
+			String ind = "";
+			for (int i = 0; i < size; i++) {
+				ind += " ";
 			}
-			printTree("");
-			if (includeThis) {
-				System.out.println("</" + getTagName() + ">");
-			}
+			return ind;
 		}
 		
-		/**
-		 * Prints the node tree from here
-		 * 
-		 * @param iind The indent
-		 */
-		public void printTree(String iind) {
-			String ind = iind;
+		public void print(Output output) {
+			print(output, 0, 0);
+		}
+		
+		public void print(Output output, int indentSize) {
+			print(output, 0, indentSize);
+		}
+		
+		
+		public void print(Output output, int startIndent, int indentSize) {
+			String ind = indent(startIndent);
+			String value = "";
+			value += ind + "<";
+			value += getTagName();
+			ArrayList<String> attrValues;
+			
+			for (String key : attributes.keySet()) {
+				attrValues = attributes.get(key);
+				value += " " + key + "=\"";
+				for (String a : attrValues) {
+					value += a + " ";
+				}
+				value = value.substring(0, value.length() - 1); //Remove tha last space
+				value += "\"";
+			}
+			if (isVoid) {
+				value += "/>";
+				output.println(value);
+				return;
+			}
+
+			value += ">";
+			
+			output.println(value);
+
+			for (TextNode textNode: textNodes) {
+				textNode.print(output, startIndent + indentSize);
+			}
+			
+			
 			if (isVoid) {
 				return;
 			}
-			for (Element element:children) {
-				System.out.print(ind + "<" + element.getTagName());
-				for (String key : element.getAttributes().keySet()) {
-					System.out.print(" ");
-					String values = "";
-					boolean isFirst = true;
-					for (String value : element.getAttributes().get(key)) {
-						values += (isFirst ? "" : " ") + value;
-						isFirst = false;
-					}
-					
-					System.out.print(key + "=\""+values+"\"");
-					System.out.print(" ");
-				}
-			    System.out.println((element.isVoid() ? " /" : "") + ">");
-			    System.out.println(ind + "  " + element.getTextNodesAsString());
-				element.printTree(ind + "  ");
-				
-				if (!element.isVoid())
-					System.out.println(ind + "</" + element.getTagName() + ">" );
+			
+			for (Node node : children) {
+				node.print(output, indentSize + startIndent, indentSize);
 			}
+			
+			output.println(ind + "</" + tagType + ">");
 		}
+		
+		
 		
 		public HashMap<String, ArrayList<String>> getAttributes() {
 			return attributes;
@@ -307,5 +307,9 @@ public class Element extends Node{
 			return isVoid;
 		}
 		
+		
+		public enum Style {
+			
+		}
 		
 	}

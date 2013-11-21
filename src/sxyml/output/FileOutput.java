@@ -1,15 +1,25 @@
 package sxyml.output;
 
-public class FileOutput implements Output{
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 
+public class FileOutput implements Output{
+	private PrintWriter writer;
+	
+	public FileOutput(String filePath) throws FileNotFoundException {
+		writer = new PrintWriter(filePath);
+	}
+	
 	public void print(String content) {
-		// TODO Auto-generated method stub
-		
+		writer.print(content);
 	}
 
 	public void println(String content) {
-		// TODO Auto-generated method stub
-		
+		writer.println(content);
+	}
+	
+	public void close() {
+		writer.close();
 	}
 
 }

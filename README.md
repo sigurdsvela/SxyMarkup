@@ -16,7 +16,7 @@ Compiler Arguments
 --input-file / -i   Spesifies the .sxy file
 --output-file / -o  Spesifies where to output the parsed code. the Sxy compiler will cout the code if no output is spesified
 --tab-size          Spesifies tab size
---html-style-void   <link ...> instead of <link .../>
+--html-style-void   &lt;link ...> instead of &lt;link .../>
 </pre>
 </code>
 

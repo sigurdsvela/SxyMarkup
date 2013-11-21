@@ -18,10 +18,10 @@ How to use it
 <br><br>
 Compiler Arguments
 <pre><code>
---input-file  | -i  Spesifies the .sxy file
---output-file | -o  Spesifies where to output the parsed code. the Sxy compiler will cout the code if no output is spesified
---tab-size          Spesifies tab size
---html-style-void   &lt;link ...> instead of &lt;link .../>
+--input-file  | -i  (path)    Spesifies the .sxy file
+--output-file | -o  (path)    Spesifies where to output the parsed code. the Sxy compiler will cout the code if no output is spesified
+--tab-size          (integer) Spesifies tab size
+--html-style-void   (flag)    &lt;link ...> instead of &lt;link .../>
 </pre>
 </code>
 

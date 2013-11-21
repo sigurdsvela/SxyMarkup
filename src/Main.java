@@ -22,28 +22,20 @@ public class Main {
 
 	
 	public Main(String[] args) {
-		Arguments options = new Arguments(args);
+		Options options = new Options();
 		
-		try {
-			options.registerOption("--input-file");
-			options.registerOption("--output-file");
-			options.registerOption("--tab-size");
-			options.registerOption("--html-style-void");
-			options.registerOptionAlias("-o", "--output-file");
-			options.registerOptionAlias("-i", "--input-file");
-		} catch (Exception e){
-			e.printStackTrace();
+		options.addOption("--input-file", true, "Specifies the input file.");
+		options.addOption("--output-file", false, "Spesify the output file. If not definied, result will be printed on the screen.");
+		options.addOption("--tab-size", false, "Set the size of the tabs for the output.");
+		options.addOption("--html-style-void", false, "<link ...> instead of <link .../>");
+		options.addOptionAlias("-o", "--output-file");
+		options.addOptionAlias("-i", "--input-file");
+		
+		options.parse(args, true);
+		if (options.get("--tab-size") == null) {
+			options.set("--tab-size", "4");
 		}
 		
-		try {
-			options.parse();
-			if (options.get("--tab-size") == null) {
-				options.set("--tab-size", "4");
-			}
-		} catch(Arguments.KeyException e) {
-			System.out.println("The option \"" + e.key() + "\" is not a valid option.");
-			System.exit(1);
-		}
 		
 		
 		BufferedReader inputFile = null;
@@ -54,11 +46,7 @@ public class Main {
 		} catch (FileNotFoundException e) {
 			System.out.println(e.getMessage());
 			return;
-		} catch (Arguments.KeyDoesNotExistException e) {
-			System.out.println(e.getMessage());
-			return;
 		}
-		
 		
 		try {
 			sxymlRootNode = SXYML.parseFile(inputFile);
@@ -79,9 +67,6 @@ public class Main {
 			
 			output.close();
 		} catch (FileNotFoundException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-		} catch (Arguments.KeyException e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}

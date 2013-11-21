@@ -10,14 +10,13 @@ How to use it<br>
 1. Go to releases, and download the latest *non beta* release.
 2. In the folder, you will find a SxyML.jar file, this is the only one you need, unless you want to develop Sxy further.
 3. Run the jar file with the argument -i *sxy file* -o *html ouput*. To do this on a Mac/Linux you would open your terminal and write <pre><code>java -jar SxyML.jar -i myfile.sxy -o myfile.html </code></pre> 
-
-
-Parameters:
-1. -i *input file* (Required) Spesifies the input file.
-2. -o *output file* Spesifies the outfile. If no output is spesified, the result will be cout'ed.
-3. --indent-size *int* Spesifies the size of indent in the output.
-4. --html-style-void Spesifies that void elements should be printed as <link ...> instead of <link .../>
-
+<br><br>
+Compiler Arguments
+<pre><code>
+--input-file / -i   Spesifies the .sxy file
+--output-file / -o  Spesifies where to output the parsed code. the Sxy compiler will cout the code if no output is spesified
+--tab-size          Spesifies tab size
+--html-style-void   <link ...> instead of <link .../>
 
 
 Rules:

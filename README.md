@@ -36,7 +36,7 @@ The syntax is simple
 
 <pre>
 <code>
-@TAGNAME \[attrkey:\[attrvalue\] \]... {
+@TAGNAME [attrkey:[attrvalue] ]... {
 	COntent
 	
 	@TAGELEMENT {

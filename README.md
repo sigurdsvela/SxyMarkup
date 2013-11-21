@@ -6,10 +6,15 @@ You more than welcome to join the development of this compiler :)
 My email. if you have any questions or just wan't to talk to someone.<br>
 sigurd@bergsvela.com
 
-How to use it<br>
-1. Go to releases, and download the latest *non beta* release.
-2. In the folder, you will find a SxyML.jar file, this is the only one you need, unless you want to develop Sxy further.
-3. Run the jar file with the argument -i *sxy file* -o *html ouput*. To do this on a Mac/Linux you would open your terminal and write <pre><code>java -jar SxyML.jar -i myfile.sxy -o myfile.html </code></pre> 
+How to use it
+
+<ol>
+<li>Go to releases, and download the latest *non beta* release.</li>
+<li>In the folder, you will find a SxyML.jar file, this is the only one you need, unless you want to develop Sxy further.</li>
+<li>run the jar file with the argument -i *sxy file* -o *html ouput*. To do this on a Mac/Linux you would open your terminal and write <pre><code>java -jar SxyML.jar -i myfile.sxy -o myfile.html </code></pre></li>
+</ol> 
+
+
 <br><br>
 Compiler Arguments
 <pre><code>

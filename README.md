@@ -1,4 +1,4 @@
-The Sxy Markup Language
+The Sxy Markup Compiler
 =======================
 <br>
 You more than welcome to join the development of this compiler :)
@@ -13,8 +13,8 @@ How to use it<br>
 <br><br>
 Compiler Arguments
 <pre><code>
---input-file / -i   Spesifies the .sxy file
---output-file / -o  Spesifies where to output the parsed code. the Sxy compiler will cout the code if no output is spesified
+--input-file  | -i  Spesifies the .sxy file
+--output-file | -o  Spesifies where to output the parsed code. the Sxy compiler will cout the code if no output is spesified
 --tab-size          Spesifies tab size
 --html-style-void   &lt;link ...> instead of &lt;link .../>
 </pre>

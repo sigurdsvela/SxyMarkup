@@ -5,6 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import sxyml.syntaxError.ExpectedGot;
+import sxyml.syntaxError.SyntaxError;
+import sxyml.syntaxError.UnexpectedToken;
+
 public class SXYML {
 	
 	private enum STATE {
@@ -21,10 +25,6 @@ public class SXYML {
 	
 	public static boolean isWhiteSpace(String string) {
 		return (string.matches("\\s*"));
-	}
-	
-	public static void syntaxError(String error, TokenReader.Token token) {
-		System.out.println("Syntax error: " + error + " on line " + token.line() + ":" + token.column());
 	}
 	
 	public static Element parseFile(BufferedReader file) throws IOException {
@@ -88,8 +88,7 @@ public class SXYML {
 						//Ignore Whitespaces when not a textnode
 					} else {
 						if (currentNode == null) {
-							syntaxError("Text is not allowed outside of of the root element.", token);
-							continue;
+							throw new SyntaxError("Text is not allowed outside the root node.", token);
 						}
 						
 						if (currentTextNode == null) {
@@ -127,8 +126,9 @@ public class SXYML {
 						
 					} else if (token.value().compareTo(":") == 0) {
 						if (definingAttrKey == null) {
-							syntaxError("Expected attribute key, got ':'", token);
+							throw new ExpectedGot("attribute key", token);
 						} else {
+							definingAttrValue = null;
 							state = STATE.DefiningAttributeValue;
 						}
 					
@@ -154,7 +154,7 @@ public class SXYML {
 					
 					
 					} else {
-						syntaxError("Unexpected token "+ token.value() + "", token);
+						throw new UnexpectedToken(token);
 					}
 					break;
 					
@@ -178,7 +178,7 @@ public class SXYML {
 						definingAttrValue = null;
 						state = STATE.DefiningAttributeValue;
 					} else {
-						syntaxError("Unexpected token " + token.value(), token);
+						throw new UnexpectedToken(token);
 					}
 					
 					break;
@@ -213,7 +213,7 @@ public class SXYML {
 					
 					
 					} else {
-						syntaxError("Unregognized token \'" + token.value() + "\'", token);
+						throw new UnexpectedToken(token);
 					}
 					break;
 			}

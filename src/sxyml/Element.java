@@ -42,12 +42,7 @@ public class Element extends Node{
 			print(output, 0, 0);
 		}
 		
-		public void print(Output output, int indentSize) {
-			print(output, 0, indentSize);
-		}
-		
-		
-		public void print(Output output, int startIndent, int indentSize) {
+		public void print(Output output, int startIndent, int indentSize, Lang lang) {
 			String ind = indent(startIndent);
 			String value = "";
 			value += ind + "<";
@@ -64,7 +59,12 @@ public class Element extends Node{
 				value += "\"";
 			}
 			if (isVoid) {
-				value += "/>";
+				
+				if (lang.voidMustBeClosed())
+					value += " />";
+				else
+					value += ">";
+					
 				output.println(value);
 				return;
 			}
@@ -83,10 +83,14 @@ public class Element extends Node{
 			}
 			
 			for (Node node : children) {
-				node.print(output, indentSize + startIndent, indentSize);
+				node.print(output, indentSize + startIndent, indentSize, lang);
 			}
 			
-			output.println(ind + "</" + tagType + ">");
+			if (lang.endTagsHasName()) {
+				output.println(ind + "</" + tagType + ">");
+			} else {
+				output.println(ind + "</>");
+			}
 		}
 		
 		

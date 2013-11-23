@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import sxyml.Element;
+import sxyml.Node.Lang;
 import sxyml.SXYML;
 import sxyml.output.FileOutput;
 import sxyml.output.Output;
@@ -27,7 +28,7 @@ public class Main {
 		options.addOption("--input-file", true, "Specifies the input file.");
 		options.addOption("--output-file", false, "Spesify the output file. If not definied, result will be printed on the screen.");
 		options.addOption("--tab-size", false, "Set the size of the tabs for the output.");
-		options.addOption("--html-style-void", false, "<link ...> instead of <link .../>");
+		options.addOption("--output-lang", false, "Define what language to output as. HTML|XHTML|XML|SGML. Defaults to HTML.");
 		options.addOptionAlias("-o", "--output-file");
 		options.addOptionAlias("-i", "--input-file");
 		
@@ -36,9 +37,20 @@ public class Main {
 			options.set("--tab-size", "4");
 		}
 		
-		
 		if (options.getOptionValue("--input-file").startsWith("~")) {
 			throw new RuntimeException("You can not use the \"~\" to specify the path. You must use an absolute path, or a path relative to your current directory.");
+		}
+		
+		if (options.getOptionValue("--output-lang") == null)
+			options.set("--output-lang", "HTML");
+		
+		Lang lang = null;
+		try {
+			lang = Lang.valueOf(options.getOptionValue("--output-lang"));
+		} catch(IllegalArgumentException e) {
+			System.out.println(options.getOptionValue("--output-lang") + " is not a valid output language!");
+			options.printHelp();
+			System.exit(0);
 		}
 		
 		
@@ -66,8 +78,8 @@ public class Main {
 			} else {
 				output = new FileOutput(options.getOptionValue("--output-file"));
 			}
-			
-			sxymlRootNode.print(output, Integer.parseInt(options.getOptionValue("--tab-size")));
+
+			sxymlRootNode.print(output, 0, Integer.parseInt(options.getOptionValue("--tab-size")), lang);
 			
 			output.close();
 		} catch (FileNotFoundException e) {

@@ -32,17 +32,21 @@ public class Main {
 		options.addOptionAlias("-i", "--input-file");
 		
 		options.parse(args, true);
-		if (options.get("--tab-size") == null) {
+		if (options.getOptionValue("--tab-size") == null) {
 			options.set("--tab-size", "4");
 		}
 		
+		
+		if (options.getOptionValue("--input-file").startsWith("~")) {
+			throw new RuntimeException("You can not use the \"~\" to specify the path. You must use an absolute path, or a path relative to your current directory.");
+		}
 		
 		
 		BufferedReader inputFile = null;
 		
 		
 		try {
-			inputFile = new BufferedReader(new FileReader(options.get("--input-file")));
+			inputFile = new BufferedReader(new FileReader(options.getOptionValue("--input-file")));
 		} catch (FileNotFoundException e) {
 			System.out.println(e.getMessage());
 			return;
@@ -57,13 +61,13 @@ public class Main {
 		
 		try {
 			Output output;
-			if (options.get("--output-file") == null) {
+			if (options.getOptionValue("--output-file") == null) {
 				output = new SystemOutput();
 			} else {
-				output = new FileOutput(options.get("--output-file"));
+				output = new FileOutput(options.getOptionValue("--output-file"));
 			}
 			
-			sxymlRootNode.print(output, Integer.parseInt(options.get("--tab-size")));
+			sxymlRootNode.print(output, Integer.parseInt(options.getOptionValue("--tab-size")));
 			
 			output.close();
 		} catch (FileNotFoundException e) {

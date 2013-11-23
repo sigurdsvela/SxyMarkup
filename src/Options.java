@@ -45,7 +45,7 @@ public class Options {
 			}
 		}
 		
-		if (get("-h") != null) {
+		if (getOptionValue("-h") != null) {
 			printHelp();
 		}
 	}
@@ -94,7 +94,7 @@ public class Options {
 	 * @param key
 	 * @return
 	 */
-	public String get(String key) {
+	public String getOptionValue(String key) {
 		if (aliases.containsKey(key)) { //Is this key an alias
 			key = aliases.get(key);
 		}

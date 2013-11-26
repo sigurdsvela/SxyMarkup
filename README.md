@@ -6,7 +6,8 @@ You more than welcome to join the development of this compiler :)
 My email. if you have any questions or just wan't to talk to someone.<br>
 sigurd@bergsvela.com
 
-How to use it
+Usage
+=====
 
 <ol>
 <li>Go to releases, and download the latest *non beta* release.</li>
@@ -21,18 +22,18 @@ Compiler Arguments
 --input-file  | -i  (path)    Spesifies the .sxy file
 --output-file | -o  (path)    Spesifies where to output the parsed code. the Sxy compiler will cout the code if no output is spesified
 --tab-size          (integer) Spesifies tab size
---html-style-void   (flag)    &lt;link ...> instead of &lt;link .../>
+--output-lang       (enum)    Spesifies what language you would like the compiler to write as. HTML|XML|SGML|XHTML. Defaults to HTML
 </pre>
 </code>
 
 Rules:
-1. If you use this software and modify it, you are required to upload you modifications here, and share it with everybody.
-2. Remember to read rule 1. :)
+1. If you use this software and modify it, you are required to upload you modifications here, and share it with everybody.<br>
+2. Remember to read rule 1. :)<br>
 
 <br>
 
 The syntax is simple
-
+====================
 
 <pre>
 <code>
@@ -45,9 +46,8 @@ The syntax is simple
 }
 </code>
 </pre>
-<b>
-	Example:
-</b>
+
+**Example:**
 <pre>
 <code>
 	@html {
@@ -92,6 +92,7 @@ using the escape character
 </pre>
 
 
+**Formatin**
 You can format the code prettymuch anyway you like.
 This would work(But please don't do this):
 
@@ -107,6 +108,9 @@ This would work(But please don't do this):
 }
 </code>
 </pre>
+
+
+**attrkey="attrkey" shorthand**
 
 
 There is a shorthand attribute syntax which allows for setting an attribute

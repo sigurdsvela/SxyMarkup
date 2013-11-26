@@ -26,9 +26,11 @@ Compiler Arguments
 </pre>
 </code>
 
-Rules:
-1. If you use this software and modify it, you are required to upload you modifications here, and share it with everybody.<br>
-2. Remember to read rule 1. :)<br>
+Rules:<br>
+<ol>
+	<li>If you use this software and modify it, you are required to upload you modifications here, and share it with everybody.</li>
+	<li>Remember to read rule 1. :)</li>
+</ol>
 
 <br>
 
@@ -56,7 +58,7 @@ The syntax is simple
 			@link type:"text/css" href:"/style.css"; //&lt;-- Semicolon to end a void element
 			
 			/*
-			 * semi-colon end elements that are not ended like the <link> tag
+			 * semi-colon end elements that are not ended like the &lt;link&gt; tag
 			 */
 			
 			//Oy yeah, this is a single line comment

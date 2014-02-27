@@ -1,9 +1,0 @@
-@html {
-	@head {
-		@link ;
-	}
-	@body {
-		@div id:"myid" {
-		}
-	}
-}

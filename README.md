@@ -4,7 +4,7 @@ The Sxy Markup Compiler
 You more than welcome to join the development of this compiler :)
 <br>
 My email. if you have any questions or just wan't to talk to someone.<br>
-sigurd@bergsvela.com
+sigurdbergsvela@gmail.com
 
 Usage
 =====
